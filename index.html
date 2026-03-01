@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U.S. Citizenship Test Flashcards</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0b1a3b;
+      min-height: 100vh;
+      color: #e8edf5;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Patriotic background with flag-inspired design */
+    .bg-flag {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* Red and white stripes, very subtle */
+    .stripe {
+      position: absolute;
+      left: 0; right: 0;
+      height: 7.69%;
+      opacity: 0.04;
+    }
+
+    .stripe:nth-child(odd) { background: #bf0a30; }
+    .stripe:nth-child(even) { background: #ffffff; }
+
+    /* Blue canton glow */
+    .canton-glow {
+      position: absolute;
+      top: 0; left: 0;
+      width: 45%;
+      height: 55%;
+      background: radial-gradient(ellipse at 20% 20%, rgba(0,40,104,0.4) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .stars-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star-bg {
+      position: absolute;
+      color: rgba(255,255,255,0.6);
+      font-size: 10px;
+      animation: twinkle 3s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.15; transform: scale(0.8); }
+      100% { opacity: 0.7; transform: scale(1.1); }
+    }
+
+    /* Fireworks canvas */
+    #fireworksCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 28px 20px 6px;
+    }
+
+    .flag-icon {
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(191,10,48,0.4), 0 0 60px rgba(0,40,104,0.3);
+      margin-bottom: 2px;
+    }
+
+    header h1 .red { color: #e8344e; }
+    header h1 .white { color: #ffffff; }
+    header h1 .blue { color: #5b8ade; }
+
+    header p {
+      color: #7a8eb8;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .eagle-divider {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #c9a84c;
+      margin: 6px 0 2px;
+      letter-spacing: 10px;
+      opacity: 0.5;
+    }
+
+    .controls {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .controls button {
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      color: #8899bb;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      backdrop-filter: blur(4px);
+    }
+
+    .controls button:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .controls button.active {
+      background: linear-gradient(135deg, #bf0a30, #9a0825);
+      border-color: #e8344e;
+      color: white;
+      box-shadow: 0 4px 20px rgba(191,10,48,0.35);
+    }
+
+    .progress-bar {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto 8px;
+      padding: 0 20px;
+    }
+
+    .progress-bar .track {
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: linear-gradient(to right, #bf0a30, #e8344e, #ffffff, #5b8ade, #002868);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      animation: flagShimmer 3s ease infinite;
+    }
+
+    @keyframes flagShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .progress-bar .stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #556b8f;
+      margin-top: 5px;
+      padding: 0 2px;
+    }
+
+    .card-area {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 20px 20px;
+      perspective: 1200px;
+    }
+
+    .card-container {
+      width: 100%;
+      max-width: 560px;
+      height: 340px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 36px;
+      text-align: center;
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, #112244 0%, #0d1b3a 50%, #14203d 100%);
+      border: 1px solid rgba(91,138,222,0.2);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 0 40px rgba(0,40,104,0.15);
+    }
+
+    /* Corner stars on the front card */
+    .card-front::before,
+    .card-front::after {
+      position: absolute;
+      font-size: 0.9rem;
+      opacity: 0.12;
+      color: #fff;
+    }
+    .card-front::before { content: "\u2605"; top: 14px; left: 50%; transform: translateX(-50%); }
+    .card-front::after { content: "\u2605 \u2605 \u2605"; bottom: 14px; left: 50%; transform: translateX(-50%); letter-spacing: 6px; font-size: 0.6rem; }
+
+    .card-back {
+      background: linear-gradient(145deg, #0f2818 0%, #132e1c 50%, #0e2515 100%);
+      border: 1px solid rgba(68,221,136,0.2);
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 0 40px rgba(0,100,40,0.1);
+      transform: rotateY(180deg);
+    }
+
+    .card-number {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      font-size: 0.8rem;
+      color: #4a6a9e;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .card-category {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 0.7rem;
+      color: #5b7aaa;
+      background: rgba(91,138,222,0.1);
+      padding: 3px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(91,138,222,0.15);
+      letter-spacing: 0.5px;
+    }
+
+    .card-front .question {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #dde4f0;
+    }
+
+    .card-front .hint {
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: #3d5580;
+    }
+
+    .card-back .answer-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #44bb77;
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+
+    .card-back .answer {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: #b8e8cc;
+    }
+
+    .card-back .answer .separator {
+      display: block;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 6px auto;
+      width: 40px;
+    }
+
+    .nav-buttons {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 20px 10px;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .nav-buttons button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-wrong {
+      background: rgba(191, 10, 48, 0.12);
+      color: #ff6680;
+      border: 1px solid rgba(191, 10, 48, 0.25) !important;
+    }
+
+    .btn-wrong:hover {
+      background: rgba(191, 10, 48, 0.25);
+      box-shadow: 0 4px 20px rgba(191,10,48,0.2);
+    }
+
+    .btn-right {
+      background: rgba(0, 150, 80, 0.12);
+      color: #44dd88;
+      border: 1px solid rgba(0, 150, 80, 0.25) !important;
+    }
+
+    .btn-right:hover {
+      background: rgba(0, 150, 80, 0.25);
+      box-shadow: 0 4px 20px rgba(0,150,80,0.2);
+    }
+
+    .btn-skip {
+      flex: 0.5;
+      background: rgba(255,255,255,0.04);
+      color: #556b8f;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+    }
+
+    .btn-skip:hover { background: rgba(255,255,255,0.08); color: #8899bb; }
+
+    .score-strip {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 12px 20px;
+      font-size: 0.85rem;
+    }
+
+    .score-strip span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #667799;
+    }
+
+    .score-strip .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-right { background: #44dd88; box-shadow: 0 0 8px rgba(68,221,136,0.4); }
+    .dot-wrong { background: #ff4466; box-shadow: 0 0 8px rgba(255,68,102,0.4); }
+    .dot-remaining { background: #2a3a5a; }
+
+    .keyboard-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #3a4d6e;
+      padding: 4px 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .keyboard-hint kbd {
+      display: inline-block;
+      padding: 2px 7px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.72rem;
+      margin: 0 1px;
+      color: #556b8f;
+    }
+
+    .complete-screen {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+
+    .complete-screen.show { display: block; }
+
+    .complete-screen h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(191,10,48,0.3);
+    }
+
+    .complete-screen .final-score {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #e8344e, #ffffff, #5b8ade);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 16px 0;
+    }
+
+    .complete-screen p {
+      color: #7a8eb8;
+      margin-bottom: 24px;
+    }
+
+    .complete-screen button {
+      padding: 14px 36px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #bf0a30, #8b0022);
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 6px;
+      box-shadow: 0 4px 20px rgba(191,10,48,0.3);
+    }
+
+    .complete-screen button:hover { transform: scale(1.04); }
+
+    .complete-screen .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: #8899bb;
+      box-shadow: none;
+    }
+
+    .game-area { position: relative; z-index: 1; }
+    .game-area.hidden { display: none; }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .card-container { height: 300px; }
+      .card-front .question { font-size: 1.1rem; }
+      .card-back .answer { font-size: 1rem; }
+      .controls button { font-size: 0.78rem; padding: 6px 12px; }
+    }
+
+    .shuffle-anim {
+      animation: shufflePop 0.3s ease;
+    }
+
+    @keyframes shufflePop {
+      0% { transform: scale(0.92) rotateY(0); opacity: 0.5; }
+      100% { transform: scale(1) rotateY(0); opacity: 1; }
+    }
+
+    /* Flash green border on Got It */
+    .card-container.correct-flash .card-face {
+      border-color: #44dd88 !important;
+      box-shadow: 0 0 40px rgba(68,221,136,0.3) !important;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Patriotic background -->
+<div class="bg-flag">
+  <div class="stripe" style="top:0%"></div>
+  <div class="stripe" style="top:7.69%"></div>
+  <div class="stripe" style="top:15.38%"></div>
+  <div class="stripe" style="top:23.07%"></div>
+  <div class="stripe" style="top:30.76%"></div>
+  <div class="stripe" style="top:38.45%"></div>
+  <div class="stripe" style="top:46.14%"></div>
+  <div class="stripe" style="top:53.83%"></div>
+  <div class="stripe" style="top:61.52%"></div>
+  <div class="stripe" style="top:69.21%"></div>
+  <div class="stripe" style="top:76.9%"></div>
+  <div class="stripe" style="top:84.59%"></div>
+  <div class="stripe" style="top:92.28%"></div>
+  <div class="canton-glow"></div>
+</div>
+
+<div class="stars-bg" id="starsBg"></div>
+
+<!-- Fireworks canvas -->
+<canvas id="fireworksCanvas"></canvas>
+
+<header>
+  <span class="flag-icon">&#127482;&#127480;</span>
+  <h1><span class="red">U.S.</span> <span class="white">Citizenship</span> <span class="blue">Test</span></h1>
+  <p>100 Civics Questions &amp; Answers</p>
+  <div class="eagle-divider">&#9734; &#9734; &#9734; &#9734; &#9734;</div>
+</header>
+
+<div class="controls" id="controls">
+  <button class="active" data-category="all">All (100)</button>
+  <button data-category="government">Government</button>
+  <button data-category="history">History</button>
+  <button data-category="civics">Integrated Civics</button>
+  <button id="shuffleBtn">Shuffle</button>
+  <button id="missedBtn">Missed Only</button>
+</div>
+
+<div class="game-area" id="gameArea">
+  <div class="progress-bar">
+    <div class="track"><div class="fill" id="progressFill"></div></div>
+    <div class="stats">
+      <span id="progressText">1 / 100</span>
+      <span id="percentText">0%</span>
+    </div>
+  </div>
+
+  <div class="card-area">
+    <div class="card-container" id="cardContainer" tabindex="0">
+      <div class="card" id="card">
+        <div class="card-face card-front">
+          <div class="card-number" id="cardNumber">Q1</div>
+          <div class="card-category" id="cardCategory">Government</div>
+          <div class="question" id="questionText"></div>
+          <div class="hint">Tap or press Space to reveal answer</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-number" id="cardNumberBack">Q1</div>
+          <div class="answer-label">Answer</div>
+          <div class="answer" id="answerText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="btn-wrong" id="wrongBtn">Missed It</button>
+    <button class="btn-skip" id="skipBtn">Skip</button>
+    <button class="btn-right" id="rightBtn">Got It!</button>
+  </div>
+
+  <div class="score-strip">
+    <span><span class="dot dot-right"></span> <span id="rightCount">0</span> correct</span>
+    <span><span class="dot dot-wrong"></span> <span id="wrongCount">0</span> missed</span>
+    <span><span class="dot dot-remaining"></span> <span id="remainCount">100</span> left</span>
+  </div>
+
+  <div class="keyboard-hint">
+    <kbd>Space</kbd> flip &nbsp; <kbd>&larr;</kbd> missed &nbsp; <kbd>&rarr;</kbd> got it &nbsp; <kbd>&darr;</kbd> skip
+  </div>
+</div>
+
+<div class="complete-screen" id="completeScreen">
+  <h2>&#127881; Round Complete! &#127881;</h2>
+  <div class="final-score" id="finalScore">0%</div>
+  <p id="finalMessage"></p>
+  <button id="restartBtn">Start Over</button>
+  <button class="btn-secondary" id="reviewMissedBtn">Review Missed</button>
+</div>
+
+<script>
+// ===== AUDIO: Synthesized celebration chime =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function playCorrectSound() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  const now = audioCtx.currentTime;
+
+  // Bright triumphant two-note chime (quick!)
+  const notes = [523.25, 783.99]; // C5 -> G5
+  notes.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.18, now + i * 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now + i * 0.08);
+    osc.stop(now + i * 0.08 + 0.4);
+  });
+
+  // Sparkle overlay
+  const osc2 = audioCtx.createOscillator();
+  const g2 = audioCtx.createGain();
+  osc2.type = "sine";
+  osc2.frequency.value = 1568; // G6
+  g2.gain.setValueAtTime(0.06, now + 0.1);
+  g2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+  osc2.connect(g2);
+  g2.connect(audioCtx.destination);
+  osc2.start(now + 0.1);
+  osc2.stop(now + 0.55);
+}
+
+// ===== FIREWORKS =====
+const canvas = document.getElementById("fireworksCanvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let fireworksRunning = false;
+let fireworksTimer = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 5 + 2;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.alpha = 1;
+    this.decay = Math.random() * 0.025 + 0.02;
+    this.color = color;
+    this.size = Math.random() * 2.5 + 1;
+    this.gravity = 0.06;
+    // Some particles are star-shaped
+    this.isStar = Math.random() > 0.6;
+  }
+
+  update() {
+    this.vx *= 0.98;
+    this.vy *= 0.98;
+    this.vy += this.gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= this.decay;
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.alpha);
+    ctx.fillStyle = this.color;
+    if (this.isStar) {
+      drawStar(ctx, this.x, this.y, 5, this.size * 2, this.size);
+    } else {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+  let rot = Math.PI / 2 * 3;
+  let step = Math.PI / spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerR);
+  for (let i = 0; i < spikes; i++) {
+    ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+    rot += step;
+    ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+    rot += step;
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function launchFirework() {
+  // Patriotic colors!
+  const palettes = [
+    ["#ff2040","#ff6680","#ff8899","#ffffff"],  // Red-white
+    ["#ffffff","#eeeeff","#ccddff","#c9a84c"],  // White-gold
+    ["#3366ff","#5b8ade","#88aaff","#ffffff"],  // Blue-white
+    ["#ff2040","#ffffff","#3366ff"],             // Red-white-blue
+    ["#c9a84c","#ffe066","#ffffff"],             // Gold
+  ];
+  const palette = palettes[Math.floor(Math.random() * palettes.length)];
+
+  // Random position in upper 2/3 of screen, centered-ish
+  const x = canvas.width * (0.2 + Math.random() * 0.6);
+  const y = canvas.height * (0.1 + Math.random() * 0.4);
+
+  const count = 30 + Math.floor(Math.random() * 20);
+  for (let i = 0; i < count; i++) {
+    const color = palette[Math.floor(Math.random() * palette.length)];
+    particles.push(new Particle(x, y, color));
+  }
+}
+
+function animateFireworks() {
+  if (!fireworksRunning && particles.length === 0) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles = particles.filter(p => p.alpha > 0);
+  particles.forEach(p => {
+    p.update();
+    p.draw(ctx);
+  });
+
+  if (fireworksRunning || particles.length > 0) {
+    requestAnimationFrame(animateFireworks);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function triggerCelebration() {
+  playCorrectSound();
+
+  // Quick burst: 2-3 fireworks over ~400ms, then done
+  fireworksRunning = true;
+  launchFirework();
+  setTimeout(() => launchFirework(), 120);
+  setTimeout(() => launchFirework(), 250);
+  setTimeout(() => { fireworksRunning = false; }, 400);
+
+  animateFireworks();
+
+  // Flash the card green briefly
+  cardContainer.classList.add("correct-flash");
+  setTimeout(() => cardContainer.classList.remove("correct-flash"), 350);
+}
+
+
+// ===== FLASHCARD DATA =====
+const flashcards = [
+  { id: 1, category: "government", q: "What is the supreme law of the land?", a: ["The Constitution"] },
+  { id: 2, category: "government", q: "What does the Constitution do?", a: ["Sets up the government", "Defines the government", "Protects basic rights of Americans"] },
+  { id: 3, category: "government", q: "The idea of self-government is in the first three words of the Constitution. What are these words?", a: ["We the People"] },
+  { id: 4, category: "government", q: "What is an amendment?", a: ["A change (addition) to the Constitution"] },
+  { id: 5, category: "government", q: "What do we call the first ten amendments to the Constitution?", a: ["The Bill of Rights"] },
+  { id: 6, category: "government", q: "What is one right or freedom from the First Amendment?", a: ["Speech", "Religion", "Assembly", "Press", "Petition the government"] },
+  { id: 7, category: "government", q: "How many amendments does the Constitution have?", a: ["Twenty-seven (27)"] },
+  { id: 8, category: "government", q: "What did the Declaration of Independence do?", a: ["Announced our independence (from Great Britain)", "Declared our independence (from Great Britain)", "Said that the United States is free (from Great Britain)"] },
+  { id: 9, category: "government", q: "What are two rights in the Declaration of Independence?", a: ["Life", "Liberty", "Pursuit of happiness"] },
+  { id: 10, category: "government", q: "What is freedom of religion?", a: ["You can practice any religion, or not practice a religion"] },
+  { id: 11, category: "government", q: "What is the economic system in the United States?", a: ["Capitalist economy", "Market economy"] },
+  { id: 12, category: "government", q: "What is the \u201Crule of law\u201D?", a: ["Everyone must follow the law", "Leaders must obey the law", "Government must obey the law", "No one is above the law"] },
+  { id: 13, category: "government", q: "Name one branch or part of the government.", a: ["Congress / Legislative", "President / Executive", "The courts / Judicial"] },
+  { id: 14, category: "government", q: "What stops one branch of government from becoming too powerful?", a: ["Checks and balances", "Separation of powers"] },
+  { id: 15, category: "government", q: "Who is in charge of the executive branch?", a: ["The President"] },
+  { id: 16, category: "government", q: "Who makes federal laws?", a: ["Congress", "Senate and House (of Representatives)", "(U.S. or national) legislature"] },
+  { id: 17, category: "government", q: "What are the two parts of the U.S. Congress?", a: ["The Senate and House of Representatives"] },
+  { id: 18, category: "government", q: "How many U.S. Senators are there?", a: ["One hundred (100)"] },
+  { id: 19, category: "government", q: "We elect a U.S. Senator for how many years?", a: ["Six (6)"] },
+  { id: 20, category: "government", q: "Who is one of your state\u2019s U.S. Senators now?", a: ["(Answers will vary by state)"] },
+  { id: 21, category: "government", q: "The House of Representatives has how many voting members?", a: ["Four hundred thirty-five (435)"] },
+  { id: 22, category: "government", q: "We elect a U.S. Representative for how many years?", a: ["Two (2)"] },
+  { id: 23, category: "government", q: "Name your U.S. Representative.", a: ["(Answers will vary by district)"] },
+  { id: 24, category: "government", q: "Who does a U.S. Senator represent?", a: ["All people of the state"] },
+  { id: 25, category: "government", q: "Why do some states have more Representatives than other states?", a: ["Because of the state\u2019s population", "Because they have more people"] },
+  { id: 26, category: "government", q: "We elect a President for how many years?", a: ["Four (4)"] },
+  { id: 27, category: "government", q: "In what month do we vote for President?", a: ["November"] },
+  { id: 28, category: "government", q: "What is the name of the President of the United States now?", a: ["Donald Trump"] },
+  { id: 29, category: "government", q: "What is the name of the Vice President of the United States now?", a: ["JD Vance"] },
+  { id: 30, category: "government", q: "If the President can no longer serve, who becomes President?", a: ["The Vice President"] },
+  { id: 31, category: "government", q: "If both the President and the Vice President can no longer serve, who becomes President?", a: ["The Speaker of the House"] },
+  { id: 32, category: "government", q: "Who is the Commander in Chief of the military?", a: ["The President"] },
+  { id: 33, category: "government", q: "Who signs bills to become laws?", a: ["The President"] },
+  { id: 34, category: "government", q: "Who vetoes bills?", a: ["The President"] },
+  { id: 35, category: "government", q: "What does the President\u2019s Cabinet do?", a: ["Advises the President"] },
+  { id: 36, category: "government", q: "What are two Cabinet-level positions?", a: ["Secretary of Agriculture", "Secretary of Commerce", "Secretary of Defense", "Secretary of Education", "Secretary of Energy", "Secretary of Health and Human Services", "Secretary of Homeland Security", "Secretary of Housing and Urban Development", "Secretary of the Interior", "Secretary of Labor", "Secretary of State", "Secretary of Transportation", "Secretary of the Treasury", "Secretary of Veterans Affairs", "Attorney General", "Vice President"] },
+  { id: 37, category: "government", q: "What does the judicial branch do?", a: ["Reviews laws", "Explains laws", "Resolves disputes (disagreements)", "Decides if a law goes against the Constitution"] },
+  { id: 38, category: "government", q: "What is the highest court in the United States?", a: ["The Supreme Court"] },
+  { id: 39, category: "government", q: "How many justices are on the Supreme Court?", a: ["Nine (9)"] },
+  { id: 40, category: "government", q: "Who is the Chief Justice of the United States now?", a: ["John Roberts"] },
+  { id: 41, category: "government", q: "Under our Constitution, some powers belong to the federal government. What is one power of the federal government?", a: ["To print money", "To declare war", "To create an army", "To make treaties"] },
+  { id: 42, category: "government", q: "Under our Constitution, some powers belong to the states. What is one power of the states?", a: ["Provide schooling and education", "Provide protection (police)", "Provide safety (fire departments)", "Give a driver\u2019s license", "Approve zoning and land use"] },
+  { id: 43, category: "government", q: "Who is the Governor of your state now?", a: ["(Answers will vary by state)"] },
+  { id: 44, category: "government", q: "What is the capital of your state?", a: ["(Answers will vary by state)"] },
+  { id: 45, category: "government", q: "What are the two major political parties in the United States?", a: ["Democratic and Republican"] },
+  { id: 46, category: "government", q: "What is the political party of the President now?", a: ["Republican"] },
+  { id: 47, category: "government", q: "What is the name of the Speaker of the House of Representatives now?", a: ["Mike Johnson"] },
+  { id: 48, category: "government", q: "There are four amendments to the Constitution about who can vote. Describe one of them.", a: ["Citizens eighteen (18) and older can vote", "You don\u2019t have to pay (a poll tax) to vote", "Any citizen can vote (women and men)", "A male citizen of any race can vote"] },
+  { id: 49, category: "government", q: "What is one responsibility that is only for United States citizens?", a: ["Serve on a jury", "Vote in a federal election"] },
+  { id: 50, category: "government", q: "Name one right only for United States citizens.", a: ["Vote in a federal election", "Run for federal office"] },
+  { id: 51, category: "government", q: "What are two rights of everyone living in the United States?", a: ["Freedom of expression", "Freedom of speech", "Freedom of assembly", "Freedom to petition the government", "Freedom of religion", "The right to bear arms"] },
+  { id: 52, category: "government", q: "What do we show loyalty to when we say the Pledge of Allegiance?", a: ["The United States", "The flag"] },
+  { id: 53, category: "government", q: "What is one promise you make when you become a United States citizen?", a: ["Give up loyalty to other countries", "Defend the Constitution and laws of the United States", "Obey the laws of the United States", "Serve in the U.S. military (if needed)", "Serve (do important work for) the nation (if needed)", "Be loyal to the United States"] },
+  { id: 54, category: "government", q: "How old do citizens have to be to vote for President?", a: ["Eighteen (18) and older"] },
+  { id: 55, category: "government", q: "What are two ways that Americans can participate in their democracy?", a: ["Vote", "Join a political party", "Help with a campaign", "Join a civic group", "Join a community group", "Give an elected official your opinion on an issue", "Call Senators and Representatives", "Publicly support or oppose an issue or policy", "Run for office", "Write to a newspaper"] },
+  { id: 56, category: "government", q: "When is the last day you can send in federal income tax forms?", a: ["April 15"] },
+  { id: 57, category: "government", q: "When must all men register for the Selective Service?", a: ["At age eighteen (18)", "Between eighteen (18) and twenty-six (26)"] },
+  { id: 58, category: "history", q: "What is one reason colonists came to America?", a: ["Freedom", "Political liberty", "Religious freedom", "Economic opportunity", "Practice their religion", "Escape persecution"] },
+  { id: 59, category: "history", q: "Who lived in America before the Europeans arrived?", a: ["American Indians", "Native Americans"] },
+  { id: 60, category: "history", q: "What group of people was taken to America and sold as slaves?", a: ["Africans", "People from Africa"] },
+  { id: 61, category: "history", q: "Why did the colonists fight the British?", a: ["Because of high taxes (taxation without representation)", "Because the British army stayed in their houses (boarding, quartering)", "Because they didn\u2019t have self-government"] },
+  { id: 62, category: "history", q: "Who wrote the Declaration of Independence?", a: ["(Thomas) Jefferson"] },
+  { id: 63, category: "history", q: "When was the Declaration of Independence adopted?", a: ["July 4, 1776"] },
+  { id: 64, category: "history", q: "There were 13 original states. Name three.", a: ["New Hampshire", "Massachusetts", "Rhode Island", "Connecticut", "New York", "New Jersey", "Pennsylvania", "Delaware", "Maryland", "Virginia", "North Carolina", "South Carolina", "Georgia"] },
+  { id: 65, category: "history", q: "What happened at the Constitutional Convention?", a: ["The Constitution was written", "The Founding Fathers wrote the Constitution"] },
+  { id: 66, category: "history", q: "When was the Constitution written?", a: ["1787"] },
+  { id: 67, category: "history", q: "The Federalist Papers supported the passage of the U.S. Constitution. Name one of the writers.", a: ["(James) Madison", "(Alexander) Hamilton", "(John) Jay", "Publius"] },
+  { id: 68, category: "history", q: "What is one thing Benjamin Franklin is famous for?", a: ["U.S. diplomat", "Oldest member of the Constitutional Convention", "First Postmaster General of the United States", "Writer of \u201CPoor Richard\u2019s Almanac\u201D", "Started the first free libraries"] },
+  { id: 69, category: "history", q: "Who is the \u201CFather of Our Country\u201D?", a: ["(George) Washington"] },
+  { id: 70, category: "history", q: "Who was the first President?", a: ["(George) Washington"] },
+  { id: 71, category: "history", q: "What territory did the United States buy from France in 1803?", a: ["The Louisiana Territory", "Louisiana"] },
+  { id: 72, category: "history", q: "Name one war fought by the United States in the 1800s.", a: ["War of 1812", "Mexican-American War", "Civil War", "Spanish-American War"] },
+  { id: 73, category: "history", q: "Name the U.S. war between the North and the South.", a: ["The Civil War", "The War between the States"] },
+  { id: 74, category: "history", q: "Name one problem that led to the Civil War.", a: ["Slavery", "Economic reasons", "States\u2019 rights"] },
+  { id: 75, category: "history", q: "What was one important thing that Abraham Lincoln did?", a: ["Freed the slaves (Emancipation Proclamation)", "Saved (or preserved) the Union", "Led the United States during the Civil War"] },
+  { id: 76, category: "history", q: "What did the Emancipation Proclamation do?", a: ["Freed the slaves", "Freed slaves in the Confederacy", "Freed slaves in the Confederate states", "Freed slaves in most Southern states"] },
+  { id: 77, category: "history", q: "What did Susan B. Anthony do?", a: ["Fought for women\u2019s rights", "Fought for civil rights"] },
+  { id: 78, category: "history", q: "Name one war fought by the United States in the 1900s.", a: ["World War I", "World War II", "Korean War", "Vietnam War", "(Persian) Gulf War"] },
+  { id: 79, category: "history", q: "Who was President during World War I?", a: ["(Woodrow) Wilson"] },
+  { id: 80, category: "history", q: "Who was President during the Great Depression and World War II?", a: ["(Franklin) Roosevelt"] },
+  { id: 81, category: "history", q: "Who did the United States fight in World War II?", a: ["Japan, Germany, and Italy"] },
+  { id: 82, category: "history", q: "Before he was President, Eisenhower was a general. What war was he in?", a: ["World War II"] },
+  { id: 83, category: "history", q: "During the Cold War, what was the main concern of the United States?", a: ["Communism"] },
+  { id: 84, category: "history", q: "What movement tried to end racial discrimination?", a: ["Civil rights (movement)"] },
+  { id: 85, category: "history", q: "What did Martin Luther King, Jr. do?", a: ["Fought for civil rights", "Worked for equality for all Americans"] },
+  { id: 86, category: "history", q: "What major event happened on September 11, 2001, in the United States?", a: ["Terrorists attacked the United States"] },
+  { id: 87, category: "history", q: "Name one American Indian tribe in the United States.", a: ["Cherokee", "Navajo", "Sioux", "Chippewa", "Choctaw", "Pueblo", "Apache", "Iroquois", "Creek", "Blackfeet", "Seminole", "Cheyenne", "Arawak", "Shawnee", "Mohegan", "Huron", "Oneida", "Lakota", "Crow", "Teton", "Hopi", "Inuit"] },
+  { id: 88, category: "civics", q: "Name one of the two longest rivers in the United States.", a: ["Missouri (River)", "Mississippi (River)"] },
+  { id: 89, category: "civics", q: "What ocean is on the West Coast of the United States?", a: ["Pacific (Ocean)"] },
+  { id: 90, category: "civics", q: "What ocean is on the East Coast of the United States?", a: ["Atlantic (Ocean)"] },
+  { id: 91, category: "civics", q: "Name one U.S. territory.", a: ["Puerto Rico", "U.S. Virgin Islands", "American Samoa", "Northern Mariana Islands", "Guam"] },
+  { id: 92, category: "civics", q: "Name one state that borders Canada.", a: ["Maine", "New Hampshire", "Vermont", "New York", "Pennsylvania", "Ohio", "Michigan", "Minnesota", "North Dakota", "Montana", "Idaho", "Washington", "Alaska"] },
+  { id: 93, category: "civics", q: "Name one state that borders Mexico.", a: ["California", "Arizona", "New Mexico", "Texas"] },
+  { id: 94, category: "civics", q: "What is the capital of the United States?", a: ["Washington, D.C."] },
+  { id: 95, category: "civics", q: "Where is the Statue of Liberty?", a: ["New York (Harbor)", "Liberty Island", "(Also acceptable: New Jersey, near New York City, on the Hudson River)"] },
+  { id: 96, category: "civics", q: "Why does the flag have 13 stripes?", a: ["Because there were 13 original colonies", "Because the stripes represent the original colonies"] },
+  { id: 97, category: "civics", q: "Why does the flag have 50 stars?", a: ["Because there is one star for each state", "Because each star represents a state", "Because there are 50 states"] },
+  { id: 98, category: "civics", q: "What is the name of the national anthem?", a: ["The Star-Spangled Banner"] },
+  { id: 99, category: "civics", q: "When do we celebrate Independence Day?", a: ["July 4"] },
+  { id: 100, category: "civics", q: "Name two national U.S. holidays.", a: ["New Year\u2019s Day", "Martin Luther King, Jr. Day", "Presidents\u2019 Day", "Memorial Day", "Juneteenth", "Independence Day", "Labor Day", "Columbus Day", "Veterans Day", "Thanksgiving", "Christmas"] }
+];
+
+// ===== STATE =====
+let deck = [];
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let missed = [];
+let isFlipped = false;
+let activeCategory = "all";
+let showingMissed = false;
+
+// DOM refs
+const card = document.getElementById("card");
+const cardContainer = document.getElementById("cardContainer");
+const questionText = document.getElementById("questionText");
+const answerText = document.getElementById("answerText");
+const cardNumber = document.getElementById("cardNumber");
+const cardNumberBack = document.getElementById("cardNumberBack");
+const cardCategory = document.getElementById("cardCategory");
+const progressFill = document.getElementById("progressFill");
+const progressText = document.getElementById("progressText");
+const percentText = document.getElementById("percentText");
+const rightCount = document.getElementById("rightCount");
+const wrongCount = document.getElementById("wrongCount");
+const remainCount = document.getElementById("remainCount");
+const gameArea = document.getElementById("gameArea");
+const completeScreen = document.getElementById("completeScreen");
+const finalScore = document.getElementById("finalScore");
+const finalMessage = document.getElementById("finalMessage");
+
+// ===== BACKGROUND STARS (white star characters scattered) =====
+function createStars() {
+  const container = document.getElementById("starsBg");
+  for (let i = 0; i < 50; i++) {
+    const star = document.createElement("div");
+    star.className = "star-bg";
+    star.textContent = "\u2605";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.animationDelay = Math.random() * 3 + "s";
+    star.style.fontSize = (Math.random() * 8 + 5) + "px";
+    container.appendChild(star);
+  }
+}
+createStars();
+
+// Shuffle
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const categoryLabels = {
+  government: "Government",
+  history: "History",
+  civics: "Integrated Civics"
+};
+
+function initDeck(cards) {
+  deck = [...cards];
+  currentIndex = 0;
+  correct = 0;
+  wrong = 0;
+  missed = [];
+  isFlipped = false;
+  showCard();
+  updateProgress();
+  gameArea.classList.remove("hidden");
+  completeScreen.classList.remove("show");
+}
+
+function showCard() {
+  if (currentIndex >= deck.length) {
+    showComplete();
+    return;
+  }
+  const c = deck[currentIndex];
+  questionText.textContent = c.q;
+  cardNumber.textContent = "Q" + c.id;
+  cardNumberBack.textContent = "Q" + c.id;
+  cardCategory.textContent = categoryLabels[c.category] || c.category;
+
+  if (c.a.length === 1) {
+    answerText.textContent = c.a[0];
+  } else {
+    answerText.innerHTML = c.a.map(a => a).join('<span class="separator"></span>');
+  }
+
+  isFlipped = false;
+  card.classList.remove("flipped");
+
+  card.classList.remove("shuffle-anim");
+  void card.offsetWidth;
+  card.classList.add("shuffle-anim");
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  card.classList.toggle("flipped", isFlipped);
+}
+
+function updateProgress() {
+  const total = deck.length;
+  const done = correct + wrong;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  progressFill.style.width = pct + "%";
+  progressText.textContent = (currentIndex + 1) + " / " + total;
+  percentText.textContent = pct + "% done";
+  rightCount.textContent = correct;
+  wrongCount.textContent = wrong;
+  remainCount.textContent = Math.max(0, total - done);
+}
+
+function markRight() {
+  if (currentIndex >= deck.length) return;
+  triggerCelebration();
+  correct++;
+  currentIndex++;
+  updateProgress();
+  showCard();
+}
+
+function markWrong() {
+  if (currentIndex >= deck.length) return;
+  missed.push(deck[currentIndex]);
+  wrong++;
+  currentIndex++;
+  updateProgress();
+  showCard();
+}
+
+function skip() {
+  if (currentIndex >= deck.length) return;
+  deck.push(deck[currentIndex]);
+  deck.splice(currentIndex, 1);
+  showCard();
+}
+
+function showComplete() {
+  gameArea.classList.add("hidden");
+  completeScreen.classList.add("show");
+  const total = correct + wrong;
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  finalScore.textContent = pct + "%";
+
+  // Big celebration on completion!
+  triggerCelebration();
+  setTimeout(() => triggerCelebration(), 300);
+  setTimeout(() => triggerCelebration(), 600);
+
+  if (pct === 100) {
+    finalMessage.textContent = "Perfect score! You're absolutely ready for this test!";
+  } else if (pct >= 90) {
+    finalMessage.textContent = "Amazing! Almost perfect \u2014 just a few to review.";
+  } else if (pct >= 70) {
+    finalMessage.textContent = "Great job! Review the missed ones and you'll be fully prepared.";
+  } else if (pct >= 50) {
+    finalMessage.textContent = "Good progress! Keep studying the ones you missed.";
+  } else {
+    finalMessage.textContent = "Keep practicing! You'll get there \u2014 try reviewing the missed cards.";
+  }
+
+  document.getElementById("reviewMissedBtn").style.display = missed.length > 0 ? "inline-block" : "none";
+}
+
+// Event listeners
+cardContainer.addEventListener("click", flipCard);
+document.getElementById("rightBtn").addEventListener("click", markRight);
+document.getElementById("wrongBtn").addEventListener("click", markWrong);
+document.getElementById("skipBtn").addEventListener("click", skip);
+
+document.getElementById("shuffleBtn").addEventListener("click", () => {
+  let filtered = activeCategory === "all" ? flashcards : flashcards.filter(c => c.category === activeCategory);
+  initDeck(shuffle(filtered));
+});
+
+document.getElementById("missedBtn").addEventListener("click", () => {
+  if (missed.length === 0) return;
+  showingMissed = true;
+  initDeck(shuffle(missed));
+});
+
+document.getElementById("restartBtn").addEventListener("click", () => {
+  let filtered = activeCategory === "all" ? flashcards : flashcards.filter(c => c.category === activeCategory);
+  initDeck(shuffle(filtered));
+});
+
+document.getElementById("reviewMissedBtn").addEventListener("click", () => {
+  if (missed.length === 0) return;
+  initDeck(shuffle(missed));
+});
+
+document.querySelectorAll(".controls button[data-category]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".controls button[data-category]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeCategory = btn.dataset.category;
+    let filtered = activeCategory === "all" ? flashcards : flashcards.filter(c => c.category === activeCategory);
+    initDeck(shuffle(filtered));
+  });
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === " " || e.code === "Space") {
+    e.preventDefault();
+    flipCard();
+  } else if (e.key === "ArrowRight") {
+    markRight();
+  } else if (e.key === "ArrowLeft") {
+    markWrong();
+  } else if (e.key === "ArrowDown") {
+    e.preventDefault();
+    skip();
+  }
+});
+
+// Initial load
+initDeck(shuffle(flashcards));
+</script>
+</body>
+</html>
